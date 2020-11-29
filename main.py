@@ -1,16 +1,17 @@
 import Option_H
 import sys
 import os
-import Check_args
+from Bag import Bag
 from random import randint
 
 def load_file(ruta):
     print("Cargando el fichero")
     file = open(ruta, "r")
     arr = eval(file.read())
-    print(arr)
+    for i in arr:
+        print(i)
     file.close()
-    quicksort(arr, 0, len(arr)-1)
+    #quicksort(arr, 0, len(arr)-1)
 
 def load_directory(ruta):
     print("Cargando todos los ficheros de la ruta")
@@ -52,31 +53,18 @@ def partition(arr, start, end):
 
         return index
 
-def check_argument(*argv):
-    txt: str = ""
-    for i in argv:
-        if i == '-d':
-            txt += "opcion -d \n"
-        if i == "-s":
-           txt += "opcion -s \n"
-    return txt
-
-    """if first_argument == "-h":
-        help_menu()
-    elif first_argument == "-f":
-        load_file(sys.argv[2])
-    elif first_argument == "-d":
-        load_directory(sys.argv[2])
-    else:
-        print("Estructura de la ejecución del método inválida, vea la ayuda a continuación.")
-        help_menu()"""
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     if(len(sys.argv) > 1 and len(sys.argv) < 7):
-            Check_args.check__argument(sys.argv)
+        for i in range(0, len(sys.argv)):
+            if sys.argv[1] == "-f" and i == 1:
+                print(sys.argv[i])
+                mochila = Bag(sys.argv[2])
     else:
         Option_H
 
+    print(mochila.getValue())
+    print(mochila.getWeight())
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
