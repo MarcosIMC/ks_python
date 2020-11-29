@@ -3,6 +3,7 @@ import os
 
 from random import randint
 
+
 def help_menu():
     print("Ayuda para el comando:")
     print("La estructura del comando es: main.py (opcion -d ó -f) ruta (opción -b, -r, -t, -dt)")
@@ -18,13 +19,32 @@ def help_menu():
     print("-dt Muestra el identificador de los objetos elegidos.")
     print("-----------------------------------------------------------------------------------")
 
+
 def load_file(ruta):
     print("Cargando el fichero")
-    file = open(ruta, "r")
-    arr = eval(file.read())
-    print(arr)
-    file.close()
-    quicksort(arr, 0, len(arr)-1)
+    arr_value = []
+    arr_weight = []
+    first = True
+    num_items = 0
+    max_weight = 0
+    with open(ruta, "r") as datas:
+        for data in datas:
+            aux = data.split()
+            if first:
+                num_items = aux[0]
+                max_weight = aux[1]
+                first = False
+            else:
+                arr_value.append(aux[0])
+                arr_weight.append(aux[1])
+
+        datas.close()
+        print(arr_value)
+        print(arr_weight)
+        quicksort(arr_value, arr_weight, 0, len(arr_value)-1)
+        print(arr_value)
+        print(arr_weight)
+
 
 def load_directory(ruta):
     print("Cargando todos los ficheros de la ruta")
@@ -33,38 +53,53 @@ def load_directory(ruta):
 
     for file in list:
         print(str(number_file) + " - " + file)
-        data =  open(os.path.join(ruta, file), "r")
-        #print(data.read())
+
+        data = open(os.path.join(ruta, file), "r")
+        # print(data.read())
         arr = eval(data)
         data.close()
-        quicksort(arr, 0, len(arr)-1)
-        number_file = number_file+1
+        quicksort(arr, 0, len(arr) - 1)
+        number_file = number_file + 1
 
-def quicksort(arr, start, end):
-    if start < end:
-        index = partition(arr, start, end)
-        quicksort(arr, start, index-1)
-        quicksort(arr, index+1, end)
 
-def partition(arr, start, end):
-    pivot = randint(start, end) #Escogemos un valor aleatorio entre los rangos
-    last_element = arr[end]
-    arr[end] = arr[pivot]
-    arr[pivot] = last_element
+def quicksort(arr_value, arr_weight, start, end):
+    if start < end: #La vamos a ordenar por el valor de los pesos
+        index = partition(arr_weight, arr_value, start, end)
+        #Se llama así misma la función cambiando los valores de start o end por el del indice
+        quicksort(arr_value, arr_weight, start, index - 1)
+        quicksort(arr_value, arr_weight, index + 1, end)
 
-    index = start
+
+def partition(arr_weight, arr_value, start, end):
+    pivot = randint(start, end)  # Escogemos un valor aleatorio entre los rangos
+    #Intercambiamos los valores de ambas listas para poner el del pivoteo al final y el del final al pivoteo
+    last_element = arr_value[end]
+    last_element_weight = arr_weight[end]
+    arr_value[end] = arr_value[pivot]
+    arr_weight[end] = arr_weight[pivot]
+    arr_value[pivot] = last_element
+    arr_weight[pivot] = last_element_weight
+
+    index = start #Puntero de la lista (Inicio)
+    print(index)
 
     for i in range(start, end):
-        if arr[i] <= arr[end]:
-            aux = arr[i]
-            arr[i] = arr[index]
-            arr[index] = aux
+        print(i)
+        if arr_weight[i] <= arr_weight[end]:
+            #Mientras coincida que es menor, avanzamos el indice de la lista
             index += 1
-        aux_1 = arr[end]
-        arr[end] = arr[index]
-        arr[index] = aux_1
 
-        return index
+    #Intercambiamos el final, por el valor del indice, ya que ese valor es mayor al del pivote.
+    aux_1 = arr_value[end]
+    aux_weight1 = arr_weight[end]
+    arr_value[end] = arr_value[index]
+    arr_weight[end] = arr_weight[index]
+    arr_value[index] = aux_1
+    arr_weight[index] = aux_weight1
+
+    #Retorno del indice ya que lo que esta anterior a el esta ordenado
+    return index
+
 
 def check_first_argument(first_argument):
     if first_argument == "-h":
@@ -77,12 +112,12 @@ def check_first_argument(first_argument):
         print("Estructura de la ejecución del método inválida, vea la ayuda a continuación.")
         help_menu()
 
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    if(len(sys.argv) > 1 and len(sys.argv) < 7):
+    if 1 < len(sys.argv) < 7:
         check_first_argument(sys.argv[1])
     else:
         help_menu()
-
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
