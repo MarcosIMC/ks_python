@@ -26,24 +26,31 @@ def load_file(ruta):
     arr_weight = []
     first = True
     num_items = 0
+    global  max_weight
     max_weight = 0
     with open(ruta, "r") as datas:
         for data in datas:
             aux = data.split()
             if first:
                 num_items = aux[0]
-                max_weight = aux[1]
+                max_weight = int(aux[1])
                 first = False
             else:
                 arr_value.append(aux[0])
                 arr_weight.append(aux[1])
 
         datas.close()
-        print(arr_value)
-        print(arr_weight)
-        quicksort(arr_value, arr_weight, 0, len(arr_value)-1)
-        print(arr_value)
-        print(arr_weight)
+
+        quicksort(arr_value, arr_weight, 0, len(arr_value) - 1)
+
+        items_bag = greedy_algorithm(arr_value, arr_weight, num_items, max_weight)
+        #print("El peso libre en la mochila es de: " + str(max_weight))
+        print("El valor de los objetos es de: ")
+        result = 0
+        for item in items_bag:
+            result = result + int(item)
+
+        print(result)
 
 
 def load_directory(ruta):
@@ -62,17 +69,36 @@ def load_directory(ruta):
         number_file = number_file + 1
 
 
+def greedy_algorithm(arr_value, arr_weight, num_items, max_weight):
+    i = 0
+    items_bag = []
+
+    while int(num_items) != 0:
+        item_select = int(arr_value[i])
+        arr_value[i] = 0
+        if int(arr_weight[i]) <= int(max_weight):
+            max_weight = max_weight - int(arr_weight[i])
+            items_bag.append(item_select)
+            num_items = int(num_items) - 1
+        else:
+            num_items = 0
+
+        i = i + 1
+    print("El peso libre en la mochila es de: " + str(max_weight))
+    return items_bag
+
+
 def quicksort(arr_value, arr_weight, start, end):
-    if start < end: #La vamos a ordenar por el valor de los pesos
+    if start < end:  # La vamos a ordenar por el valor de los pesos
         index = partition(arr_weight, arr_value, start, end)
-        #Se llama así misma la función cambiando los valores de start o end por el del indice
+        # Se llama así misma la función cambiando los valores de start o end por el del indice
         quicksort(arr_value, arr_weight, start, index - 1)
         quicksort(arr_value, arr_weight, index + 1, end)
 
 
 def partition(arr_weight, arr_value, start, end):
     pivot = randint(start, end)  # Escogemos un valor aleatorio entre los rangos
-    #Intercambiamos los valores de ambas listas para poner el del pivoteo al final y el del final al pivoteo
+    # Intercambiamos los valores de ambas listas para poner el del pivoteo al final y el del final al pivoteo
     last_element = arr_value[end]
     last_element_weight = arr_weight[end]
     arr_value[end] = arr_value[pivot]
@@ -80,16 +106,15 @@ def partition(arr_weight, arr_value, start, end):
     arr_value[pivot] = last_element
     arr_weight[pivot] = last_element_weight
 
-    index = start #Puntero de la lista (Inicio)
-    print(index)
+    index = start  # Puntero de la lista (Inicio)
+    #print(index)
 
     for i in range(start, end):
-        print(i)
         if arr_weight[i] <= arr_weight[end]:
-            #Mientras coincida que es menor, avanzamos el indice de la lista
+            # Mientras coincida que es menor, avanzamos el indice de la lista
             index += 1
 
-    #Intercambiamos el final, por el valor del indice, ya que ese valor es mayor al del pivote.
+    # Intercambiamos el final, por el valor del indice, ya que ese valor es mayor al del pivote.
     aux_1 = arr_value[end]
     aux_weight1 = arr_weight[end]
     arr_value[end] = arr_value[index]
@@ -97,7 +122,7 @@ def partition(arr_weight, arr_value, start, end):
     arr_value[index] = aux_1
     arr_weight[index] = aux_weight1
 
-    #Retorno del indice ya que lo que esta anterior a el esta ordenado
+    # Retorno del indice ya que lo que esta anterior a el esta ordenado
     return index
 
 
