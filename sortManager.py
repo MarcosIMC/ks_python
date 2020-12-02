@@ -38,21 +38,25 @@ class SortManager():
         # Retorno del indice ya que lo que esta anterior a el esta ordenado
         return index
 
-    def greedy_algorithm(self, arr_value, arr_weight, num_items, max_weight):
+    def greedy_algorithm(self, arr_value, arr_weight, num_items, max_weight, free_space, id_items, id_list):
         i = 0
         items_bag = []
-
         while int(num_items) != 0:
             item_select = int(arr_value[i])
             arr_value[i] = 0
             if int(arr_weight[i]) <= int(max_weight):
                 max_weight = max_weight - int(arr_weight[i])
                 items_bag.append(item_select)
+                if id_items:
+                    id_list.append(i)
                 num_items = int(num_items) - 1
             else:
                 num_items = 0
 
             i = i + 1
-        print("El peso libre en la mochila es de: " + str(max_weight))
+
+        if free_space:
+            print("El peso libre en la mochila es de: " + str(max_weight))
+
         max_weight = 0
         return items_bag
